@@ -36,39 +36,40 @@ const HomePage = () => {
     setShowRegister(true);
   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
     // Clear the notification related to password mismatch
     if (notification === 'Password must be at least 8 characters long and include both letters and numbers') {
       setNotification('');
     }
   };
-
-  const handleConfirmPasswordChange = (event) => {
+  
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(event.target.value);
     // Clear the notification related to password mismatch
     if (notification === 'Passwords do not match') {
       setNotification('');
     }
   };
-
-  const handleEmailChange = (event) => {
+  
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     // Clear the notification related to email or username already exists when the user starts typing
     if (notification === 'Email or username already exists' || notification === 'Username/email or password incorrect') {
       setNotification('');
     }
   };
-
-  const handleUsernameChange = (event) => {
+  
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
     // Clear the notification related to email or username already exists when the user starts typing
     if (notification === 'Email or username already exists' || notification === 'Username/email or password incorrect') {
       setNotification('');
     }
   };
+  
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const response = await fetch('/api/login', {
@@ -97,23 +98,26 @@ const HomePage = () => {
       setNotification('Internal server error');
     }
   };
-  
 
-  const handleRegister = async (event) => {
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const formDataObj = Object.fromEntries(formData.entries());
-
+    const formData = new FormData(event.currentTarget);
+    const formDataObj: Record<string, string> = {};
+  
+    formData.forEach((value, key) => {
+      formDataObj[key] = value as string;
+    });
+  
     if (!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
       setNotification('Password must be at least 8 characters long and include both letters and numbers');
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setNotification('Passwords do not match');
       return;
     }
-
+  
     try {
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -122,9 +126,9 @@ const HomePage = () => {
         },
         body: JSON.stringify(formDataObj),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         console.log('User registered successfully');
         setNotification('User registered successfully');
@@ -137,6 +141,7 @@ const HomePage = () => {
       setNotification('Internal server error');
     }
   };
+  
 
   const isRegisterDisabled = (
     password !== confirmPassword || 
@@ -294,21 +299,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
